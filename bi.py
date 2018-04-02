@@ -2,10 +2,7 @@
 
 import os
 import sys
-import csv
 import getopt
-
-from netaddr import IPNetwork, IPAddress
 
 try:
 	opts, args = getopt.getopt(sys.argv[1:],"i:o:n:",["ifile=","ofile=","netdata="])
@@ -24,39 +21,8 @@ for opt, arg in opts:
 		ofile = arg
 	elif opt in ("-n", "--netdata"):
 		ipdbname = arg
-   
-with open(fname, "r") as f:
-	for line in f:
-		ipv4 = IPAddress(line.rstrip())
-		#print(line.rstrip())
-
-		
-		with open(ipdbname, 'r') as csvf:
-			csvfile = csv.DictReader(csvf, delimiter=',', quotechar='"')
-			#print(csvfile.fieldnames)
-			#headers = next(csvfile)[1:]
-			netDict = {}
-			for row in csvfile:
-				#print(', '.join(row))
-				#print("-----" + row['Net'])
-				netv4 = IPNetwork(row['Net'])
-				if ipv4 in netv4:
-					netDict[netv4.size] = str(netv4) + "," + row['Site'] + "," + row['txtDescription']
-					#print("ipsize: " + str(netv4.size))
-					#print(str(ipv4) + "------" + str(netv4) + "," + row['Site'] + "," + row['txtDescription'])
-			low = min(netDict.keys())
-			#print("/////////////////// " + str(low))
-			print(str(ipv4) + ","  + str([v for k, v in netDict.items() if k == low]))
-			netDict.clear()		
-		
-		#with open(ipdbname, "r") as f2:
-		#	for line2 in f2:
-		#		netv4 = IPNetwork(line2.rstrip())
-		#		if ipv4 in netv4:
-		#			print(str(ipv4) + "------" + str(netv4))
-
-
-f.close()
+	else:
+            assert False, "unhandled option"
 
 #sys.exit(1)
 
