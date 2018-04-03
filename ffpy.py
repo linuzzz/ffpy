@@ -15,16 +15,23 @@ import configparser
 parser = argparse.ArgumentParser(description='ffmpeg simple editor wrapper')
 
 #opzioni della linea di comando
+#opzioni per il cut
 parser.add_argument('-c', '--ctime', action='store', dest='ctime', type=int, help='start time in seconds for cutting video', default=0)
 parser.add_argument('-d', '--duration', action='store', dest='duration', type=int, help='duration in seconds for cutting video')
 parser.add_argument('-t', '--title', action='store', dest='title', type=str, help='title of the video')
 #se non specifico un default si intende tipo str
 
+#opzioni per il fade
+parser.add_argument('--fadein', action='store', dest='fadein', type=int, help='duration in seconds for fadein')
+parser.add_argument('--fadeout', action='store', dest='fadeout', type=int, help='duration in seconds for fadeout')
+
 #per gli argomenti obbligatori, che non sono opzioni il dest è il nome della variabile e non deve essere specificata
 parser.add_argument('inputfile', action='store', help='input file')
 parser.add_argument('outputfile', action='store', help='output file')
 
+
 args = parser.parse_args()
+#print(args)
 
 #nome del programma
 exename = sys.argv[0]
@@ -34,8 +41,12 @@ cfgname = os.path.splitext(exename)[0] + '.cfg'
 duration = args.duration
 ctime = args.ctime
 title = args.title
+
 inputfile = args.inputfile
 outputfile = args.outputfile
+
+fadein = args.fadein
+fadeout = args.fadeout
 
 #leggo il file di configurazione
 config = configparser.RawConfigParser()
@@ -87,7 +98,12 @@ if duration is None and ctime > 0:
 	#subprocess.call(['ffmpeg', '-i gigidag_crop.mp4 -ss 1 -t 2 -c copy gigione.mp4'])
 	#subprocess.call(['ls','-l',args.outputfile])
 
+if fadein and fadeout:
+	videolen = getLength(inputfile)
+	fout = videolen - fadeout
+	cmd = "ffmpeg -y -i %s -vf 'fade=in:0:d=%s,fade=out:st=%s' -af 'afade=in:st=0:d=%s,afade=out:st=%s' -crf %s -preset %s %s" % (inputfile, fadein, fout, fadein, fout, ffquality, ffspeed, outputfile)
+	print(cmd)
+	os.system(cmd)
 
-print(str(getLength(inputfile)))
 
 
