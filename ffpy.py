@@ -56,19 +56,20 @@ ffquality = config.get('ffmpeg','quality')
 fffont = config.get('global','font')
 
 #main
+print('ctimeeeee ',ctime) 
 
 #opzioni di cut (t0,t1,t2,t3)
-#tratto di video intermedio da t1 a t2
-if duration and ctime > 0:
+#tratto di video da t0 a t1, oppure da t1 a t2
+if duration:
 	# i parametri -ss e -t vanno prima dell'input file altrimenti non funziona	
-	cmd = "ffmpeg -ss %s -t %s -i %s -c copy %s" % (ctime, duration, inputfile, outputfile)
+	cmd = "ffmpeg -y -ss %s -t %s -i %s -c copy %s" % (ctime, duration, inputfile, outputfile)
 		
 	#print(cmd)
 	os.system(cmd)
 
-#tratto di video iniziale da t0 a t1
-if duration and ctime == 0:
-	cmd = "ffmpeg -t %s -i %s -c copy %s" % (ctime, duration, inputfile, outputfile)
+#tratto di video finale da t2 a t3, non specifico la durata
+if duration is None and ctime > 0:
+	cmd = "ffmpeg -y -ss %s -i %s -c copy %s" % (ctime, inputfile, outputfile)
 	os.system(cmd)
 
 	#subprocess.call(['ffmpeg','-i', args.inputfile, '-ss', str(args.ctime), '-t', str(args.duration), '-c copy', args.outputfile])
