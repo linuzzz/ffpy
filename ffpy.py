@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.6
 
 import os
 import sys
@@ -30,6 +30,7 @@ cfgname = os.path.splitext(exename)[0] + '.cfg'
 
 #debug argparser
 print('time in seconds for cutting video duration: ', args.duration)
+print('start time in seconds for cutting video: ', args.ctime)
 print('title of the video: ', args.title)
 print('input video: ', args.inputfile)
 print('output video: ', args.outputfile)
@@ -59,10 +60,18 @@ fffont = config.get('global','font')
 
 #main
 
+print('aaaaaa  ', str(args.duration))
+
 #opzione di cut
 if args.duration:
+	cmd = "ffmpeg -ss %s -t %s -i %s -c copy %s" % (args.ctime, args.duration, args.inputfile, args.outputfile)
+	# i parametri -ss e -t vanno prima dell'input file altrimenti non funziona
+	#cmd = "ffmpeg -i %s -ss %s -t %s -c copy %s" % (args.inputfile, args.ctime, args.duration, args.outputfile)
+	print(cmd)
+	os.system(cmd)
 	#subprocess.call(['ffmpeg','-i', args.inputfile, '-ss', str(args.ctime), '-t', str(args.duration), '-c copy', args.outputfile])
-	subprocess.call(['ffmpeg','-i', args.inputfile, '-ss', str(args.ctime), '-t', str(args.duration), args.outputfile])
+	#subprocess.call(['ffmpeg', '-ss', str(args.ctime), '-t', str(args.duration), '-i', args.inputfile, '-c copy', args.outputfile])
+	#subprocess.call(['ffmpeg', '-i gigidag_crop.mp4 -ss 1 -t 2 -c copy gigione.mp4'])
 	#subprocess.call(['ls','-l',args.outputfile])
 
 
