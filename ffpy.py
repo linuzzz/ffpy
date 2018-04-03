@@ -2,7 +2,9 @@
 
 import os
 import sys
-import subprocess
+
+#subprocess con ffmpeg non funziona...
+#import subprocess
 
 #modulo per parsing argomenti linea di comando
 import argparse
@@ -28,12 +30,11 @@ exename = sys.argv[0]
 #nome del file di configurazione
 cfgname = os.path.splitext(exename)[0] + '.cfg'
 
-#debug argparser
-print('time in seconds for cutting video duration: ', args.duration)
-print('start time in seconds for cutting video: ', args.ctime)
-print('title of the video: ', args.title)
-print('input video: ', args.inputfile)
-print('output video: ', args.outputfile)
+duration = args.duration
+ctime = args.ctime
+title = args.title
+inputfile = args.inputfile
+outputfile = args.outputfile
 
 #leggo il file di configurazione
 config = configparser.RawConfigParser()
@@ -54,21 +55,22 @@ ffquality = config.get('ffmpeg','quality')
 #parametri generali 
 fffont = config.get('global','font')
 
-#print(fffont)
-#print(ffspeed)
-#print(ffquality)
-
 #main
 
-print('aaaaaa  ', str(args.duration))
-
-#opzione di cut
-if args.duration:
-	cmd = "ffmpeg -ss %s -t %s -i %s -c copy %s" % (args.ctime, args.duration, args.inputfile, args.outputfile)
-	# i parametri -ss e -t vanno prima dell'input file altrimenti non funziona
-	#cmd = "ffmpeg -i %s -ss %s -t %s -c copy %s" % (args.inputfile, args.ctime, args.duration, args.outputfile)
-	print(cmd)
+#opzioni di cut (t0,t1,t2,t3)
+#tratto di video intermedio da t1 a t2
+if duration and ctime > 0:
+	# i parametri -ss e -t vanno prima dell'input file altrimenti non funziona	
+	cmd = "ffmpeg -ss %s -t %s -i %s -c copy %s" % (ctime, duration, inputfile, outputfile)
+		
+	#print(cmd)
 	os.system(cmd)
+
+#tratto di video iniziale da t0 a t1
+if duration and ctime == 0:
+	cmd = "ffmpeg -t %s -i %s -c copy %s" % (ctime, duration, inputfile, outputfile)
+	os.system(cmd)
+
 	#subprocess.call(['ffmpeg','-i', args.inputfile, '-ss', str(args.ctime), '-t', str(args.duration), '-c copy', args.outputfile])
 	#subprocess.call(['ffmpeg', '-ss', str(args.ctime), '-t', str(args.duration), '-i', args.inputfile, '-c copy', args.outputfile])
 	#subprocess.call(['ffmpeg', '-i gigidag_crop.mp4 -ss 1 -t 2 -c copy gigione.mp4'])
