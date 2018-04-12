@@ -66,6 +66,8 @@ ffquality = config.get('ffmpeg','quality')
 
 #parametri generali 
 fffont = config.get('global','font')
+fffontcolor = config.get('global','fontcolor')
+fffontsize = config.get('global','fontsize')
 
 def getLength(input_video):
 	#senza shell=True non funziona...
@@ -106,6 +108,6 @@ if fadein and fadeout:
 
 if title:
 	#ffmpeg -y -i ooo2.mp4 -filter_complex "split[base][text];[text]drawtext=fontfile=/home/paolo/.fonts/a/Aclonica.ttf:text='Testingggggg':fontcolor=white:fontsize=80:box=1:boxcolor=black@0.3:boxborderw=100:x=(w-text_w)/2:y=(h-text_h)/2,fade=t=in:st=2:d=1:alpha=1,fade=t=out:st=3:d=1:alpha=1[new];[base][new]overlay" ooo.mp4
-	cmd = "ffmpeg -y -i %s -filter_complex 'split[base][text];[text]drawtext=fontfile=%s:text=%s:fontcolor=white:fontsize=80:box=1:boxcolor=black@0.3:boxborderw=100:x=(w-text_w)/2:y=(h-text_h)/2,fade=t=in:st=1:d=2:alpha=1,fade=t=out:st=6:d=2:alpha=1[new];[base][new]overlay' %s" % (inputfile, fffont, title, outputfile)
+	cmd = "ffmpeg -y -i %s -filter_complex 'split[base][text];[text]drawtext=fontfile=%s:text=%s:fontcolor=%s:fontsize=%s:box=1:boxcolor=black@0.3:boxborderw=100:x=(w-text_w)/2:y=(h-text_h)/2,fade=t=in:st=1:d=2:alpha=1,fade=t=out:st=6:d=2:alpha=1[new];[base][new]overlay' %s" % (inputfile, fffont, title, fffontcolor, fffontsize, outputfile)
 	os.system(cmd)
 	print(cmd)
