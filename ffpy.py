@@ -15,11 +15,15 @@ import configparser
 parser = argparse.ArgumentParser(description='ffmpeg simple editor wrapper')
 
 #opzioni della linea di comando
+#se non specifico un default si intende tipo str
+
 #opzioni per il cut
 parser.add_argument('-c', '--ctime', action='store', dest='ctime', type=int, help='start time in seconds for cutting video', default=0)
 parser.add_argument('-d', '--duration', action='store', dest='duration', type=int, help='duration in seconds for cutting video')
+
+#opzioni per altri filtri
 parser.add_argument('-t', '--title', action='store', dest='title', type=str, help='title of the video')
-#se non specifico un default si intende tipo str
+parser.add_argument('-z', '--zoom', action='store', dest='zoom', type=int, help='zoom the video by factor z')
 
 #opzioni per il fade
 parser.add_argument('--fadein', action='store', dest='fadein', type=int, help='duration in seconds for fadein')
@@ -41,6 +45,8 @@ cfgname = os.path.splitext(exename)[0] + '.cfg'
 duration = args.duration
 ctime = args.ctime
 title = args.title
+
+zoom = args.zoom
 
 inputfile = args.inputfile
 outputfile = args.outputfile
@@ -111,3 +117,9 @@ if title:
 	cmd = "ffmpeg -y -i %s -filter_complex 'split[base][text];[text]drawtext=fontfile=%s:text=%s:fontcolor=%s:fontsize=%s:box=1:boxcolor=black@0.3:boxborderw=100:x=(w-text_w)/2:y=(h-text_h)/2,fade=t=in:st=1:d=2:alpha=1,fade=t=out:st=6:d=2:alpha=1[new];[base][new]overlay' %s" % (inputfile, fffont, title, fffontcolor, fffontsize, outputfile)
 	os.system(cmd)
 	print(cmd)
+
+if zoom:
+	cmd = "ffmpeg -y -i %s -vf 'scale=%s*iw:-1, crop=iw/%s:ih/%s' %s" % (inputfile, zoom, zoom, zoom, outputfile)
+	os.system(cmd)
+	print(cmd)
+
