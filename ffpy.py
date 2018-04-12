@@ -67,7 +67,6 @@ ffquality = config.get('ffmpeg','quality')
 #parametri generali 
 fffont = config.get('global','font')
 
-
 def getLength(input_video):
 	#senza shell=True non funziona...
 	result = subprocess.Popen(['ffprobe -i %s -show_entries format=duration -v quiet -of csv="p=0"' % input_video], stdout=subprocess.PIPE,stderr=subprocess.STDOUT,shell=True)
@@ -102,8 +101,11 @@ if fadein and fadeout:
 	videolen = getLength(inputfile)
 	fout = videolen - fadeout
 	cmd = "ffmpeg -y -i %s -vf 'fade=in:0:d=%s,fade=out:st=%s' -af 'afade=in:st=0:d=%s,afade=out:st=%s' -crf %s -preset %s %s" % (inputfile, fadein, fout, fadein, fout, ffquality, ffspeed, outputfile)
-	print(cmd)
+	#print(cmd)
 	os.system(cmd)
 
-
-
+if title:
+	#ffmpeg -y -i ooo2.mp4 -filter_complex "split[base][text];[text]drawtext=fontfile=/home/paolo/.fonts/a/Aclonica.ttf:text='Testingggggg':fontcolor=white:fontsize=80:box=1:boxcolor=black@0.3:boxborderw=100:x=(w-text_w)/2:y=(h-text_h)/2,fade=t=in:st=2:d=1:alpha=1,fade=t=out:st=3:d=1:alpha=1[new];[base][new]overlay" ooo.mp4
+	cmd = "ffmpeg -y -i %s -filter_complex 'split[base][text];[text]drawtext=fontfile=%s:text=%s:fontcolor=white:fontsize=80:box=1:boxcolor=black@0.3:boxborderw=100:x=(w-text_w)/2:y=(h-text_h)/2,fade=t=in:st=1:d=2:alpha=1,fade=t=out:st=6:d=2:alpha=1[new];[base][new]overlay' %s" % (inputfile, fffont, title, outputfile)
+	os.system(cmd)
+	print(cmd)
